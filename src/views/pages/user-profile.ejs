@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head'); %>
+<body>
+  <div class="container">
+    <%- include('../partials/nav-menu'); %>
+
+    <h3>Просмотр профиля пользователя</h3>  
+   
+    <div class="card" style="width: 24rem;">
+        <div class="card-body">
+        <h6 class="card-title">Имя пользователя</h6>
+        <p class="card-text"><%= user.displayName %></p>
+        <h6 class="card-title">Ник</h6>
+        <p class="card-text"><%= user.username %></p>
+        <h6 class="card-title">Email</h6>
+        <p class="card-text"><%= user.email %></p>        
+        
+        <a href="/" class="btn btn-primary mt-3">Закрыть</a>        
+      </div>
+    </div>    
+  </div> 
+
+  <%- include('../partials/footer'); %> 
+</body>
+</html>

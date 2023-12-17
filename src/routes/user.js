@@ -1,6 +1,6 @@
 import express from 'express';
 import passport from 'passport';
-import Users from '../models/usersSchema';
+import { UserModelDB } from '../models/usersSchema';
 
 const router = express.Router();
 
@@ -49,7 +49,7 @@ router.post(
     const {
       username, userpassword, dispname, email,
     } = request.body;
-    const newUser = new Users({
+    const newUser = new UserModelDB({
       username, password: userpassword, displayName: dispname, email,
     });
 

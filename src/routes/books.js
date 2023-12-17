@@ -1,7 +1,7 @@
 import express from 'express';
 import axios from 'axios';
 import upload from '../middleware/upload';
-import Books from '../models/booksSchema';
+import { BookModelDB } from '../models/booksSchema';
 import fillDB from '../db/fill-db';
 
 const router = express.Router();
@@ -15,7 +15,7 @@ fillDB();
 
 router.get('/', async (request, response) => {
   try {
-    const books = await Books.find().select('-__v');
+    const books = await BookModelDB.find().select('-__v');
 
     response.render('../src/views/pages/index', { books, user: request.user });
   } catch (err) {
@@ -27,7 +27,7 @@ router.get('/:id', async (request, response) => {
   const { id } = request.params;
 
   try {
-    const book = await Books.findById(id).select('-__v');
+    const book = await BookModelDB.findById(id).select('-__v');
 
     await instance.post(`/counter/${id}/incr`);
     const counterResponse = await instance.get(`/counter/${id}`);
@@ -42,7 +42,7 @@ router.get('/update/:id', async (request, response) => {
   const { id } = request.params;
 
   try {
-    const book = await Books.findById(id).select('-__v');
+    const book = await BookModelDB.findById(id).select('-__v');
 
     response.render('../src/views/pages/update', { book });
   } catch (err) {
@@ -62,7 +62,7 @@ router.post(
       const fileCover = request.files['cover-file'][0].filename;
       const fileName = request.files['book-file'][0].originalname;
 
-      const newBook = new Books({
+      const newBook = new BookModelDB({
         title, authors, description, favorite, fileCover, fileName,
       });
 
@@ -98,7 +98,7 @@ router.post(
       };
 
       try {
-        await Books.findByIdAndUpdate(id, updateBook);
+        await BookModelDB.findByIdAndUpdate(id, updateBook);
 
         response.status(200);
         return response.redirect('/api/books');
@@ -114,7 +114,7 @@ router.get('/delete/:id', async (request, response) => {
   const { id } = request.params;
 
   try {
-    await Books.findByIdAndDelete(id);
+    await BookModelDB.findByIdAndDelete(id);
 
     response.redirect('/api/books');
   } catch (err) {

@@ -1,13 +1,13 @@
-import Books from '../models/booksSchema';
-import Users from '../models/usersSchema';
+import { BookModelDB } from '../models/booksSchema';
+import { UserModelDB } from '../models/usersSchema';
 
 // начальное заполнение БД для тестирования
 export default async function fillDB() {
-  await Users.deleteMany({});
-  await Books.deleteMany({});
+  await UserModelDB.deleteMany({});
+  await BookModelDB.deleteMany({});
 
   try {
-    await Users.insertMany([
+    await UserModelDB.insertMany([
       {
         username: 'Ivan',
         password: '123',
@@ -25,7 +25,7 @@ export default async function fillDB() {
     console.log('Error database initial insertion Users', err);
   }
   try {
-    await Books.insertMany([
+    await BookModelDB.insertMany([
       {
         title: 'Война и мир',
         authors: 'Л.Н.Толстой',
@@ -41,6 +41,6 @@ export default async function fillDB() {
     console.log('Error database initial insertion Books', err);
   }
 
-  const test = await Users.find();
+  const test = await UserModelDB.find();
   console.log(test);
 }

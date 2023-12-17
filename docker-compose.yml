@@ -30,7 +30,7 @@ services:
       - PORT=3000      
       - COUNTER_URL=http://counter:3002
       - DB_URL=mongodb://root:example@mongo_db:27017
-    command: npm run dev
+    command: npm run start
     depends_on:      
       - counter
       - mongo_db

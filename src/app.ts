@@ -40,7 +40,7 @@ passport.serializeUser<Types.ObjectId>((user, done) => {
   done(null, user._id);
 });
 
-passport.deserializeUser((id: Types.ObjectId, done) => {
+passport.deserializeUser<Types.ObjectId>((id: Types.ObjectId, done) => {
   findById(id, (err, user) => {
     if (err) {
       return done(err);

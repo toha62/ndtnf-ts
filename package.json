@@ -2,10 +2,11 @@
   "name": "library",
   "version": "1.1.0",
   "description": "",
-  "main": "src/app.js",
+  "main": "dist/app.js",
   "scripts": {
-    "start": "node src/app.js",
-    "build": "tsc --project ./tsconfig.json --watch",
+    "start": "node dist/app.js",
+    "build": "tsc --project ./tsconfig.json",
+    "build:watch": "tsc --project ./tsconfig.json --watch",
     "dev": "nodemon -L",
     "lint": "eslint --cache --ext .js,.ts src",
     "lint:fix": "eslint --fix --ext .js,.ts sr"

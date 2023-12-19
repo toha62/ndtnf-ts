@@ -1,20 +1,15 @@
-import Book from '../models/booksSchema';
+import { injectable } from 'inversify';
+import IBook from '../interfaces/index';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+@injectable()
 export default abstract class BookRepository {
-  protected BooksModelDB: unknown;
+  abstract createBook(bookData: IBook): Promise<IBook | null>;
 
-  constructor(BooksModelDB: unknown) {
-    this.BooksModelDB = BooksModelDB;
-  }
+  abstract getBook(id: string): Promise<IBook | null>;
 
-  abstract createBook(book: Book): Book;
+  abstract getBooks(): Promise<IBook[] | null>;
 
-  abstract getBook(id: string): Book;
+  abstract updateBook(id: string, updatedData: IBook): Promise<IBook | null>;
 
-  abstract getBooks(): Book[];
-
-  abstract updateBook(id: string): Book;
-
-  abstract deleteBook(id: string): void;
+  abstract deleteBook(id: string): Promise<true | false>;
 }

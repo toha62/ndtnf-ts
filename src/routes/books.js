@@ -1,8 +1,10 @@
 import express from 'express';
 import axios from 'axios';
 import upload from '../middleware/upload';
-import { BookModelDB } from '../models/booksSchema';
-import fillDB from '../db/fill-db';
+// import { BookModelDB } from '../models/booksSchema';
+// import fillDB from '../db/fill-db';
+import container from '../containers/container';
+import BookRepository from '../book/BookRepository';
 
 const router = express.Router();
 const COUNTER_URL = process.env.COUNTER_URL || 'locallhost';
@@ -10,26 +12,31 @@ const instance = axios.create({
   baseURL: COUNTER_URL,
 });
 
+const bookRepository = container.get(BookRepository);
+
 // начальное заполнение БД для тестирования
-fillDB();
+// fillDB();
 
 router.get('/', async (request, response) => {
-  try {
-    const books = await BookModelDB.find().select('-__v');
+  const books = await bookRepository.getBooks();
 
-    response.render('../src/views/pages/index', { books, user: request.user });
-  } catch (err) {
-    response.status(500).json(err);
+  if (books) {
+    return response.render('../src/views/pages/index', { books, user: request.user });
   }
+  return response.status(404);
 });
 
 router.get('/:id', async (request, response) => {
   const { id } = request.params;
 
   try {
-    const book = await BookModelDB.findById(id).select('-__v');
+    const book = await bookRepository.getBook(id);
 
+    if (!book) {
+      throw (new Error(`id: ${id} not found in database or other error occured while getting bok from db`));
+    }
     await instance.post(`/counter/${id}/incr`);
+
     const counterResponse = await instance.get(`/counter/${id}`);
 
     response.render('../src/views/pages/view', { book, counter: counterResponse.data });
@@ -42,7 +49,11 @@ router.get('/update/:id', async (request, response) => {
   const { id } = request.params;
 
   try {
-    const book = await BookModelDB.findById(id).select('-__v');
+    const book = await bookRepository.getBook(id);
+
+    if (!book) {
+      throw (new Error(`id: ${id} not found in database or other error occured while getting bok from db`));
+    }
 
     response.render('../src/views/pages/update', { book });
   } catch (err) {
@@ -62,18 +73,18 @@ router.post(
       const fileCover = request.files['cover-file'][0].filename;
       const fileName = request.files['book-file'][0].originalname;
 
-      const newBook = new BookModelDB({
+      const newBookData = {
         title, authors, description, favorite, fileCover, fileName,
-      });
+      };
 
-      try {
-        await newBook.save();
+      const book = await bookRepository.createBook(newBookData);
 
-        response.status(201);
-        return response.redirect('/api/books');
-      } catch (err) {
-        response.status(500).json(err);
+      if (!book) {
+        response.status(500);
+        throw (new Error('Database Error. Can not create book'));
       }
+      response.status(201);
+      return response.redirect('/api/books');
     }
     return response.json('File not found');
   },
@@ -97,14 +108,14 @@ router.post(
         title, authors, description, favorite, fileCover, fileName,
       };
 
-      try {
-        await BookModelDB.findByIdAndUpdate(id, updateBook);
+      const book = await bookRepository.updateBook(id, updateBook);
 
-        response.status(200);
-        return response.redirect('/api/books');
-      } catch (err) {
-        response.status(404).json(err);
+      if (!book) {
+        response.status(500);
+        throw (new Error(`Database Error. Can not udate book with id: ${id}`));
       }
+      response.status(200);
+      return response.redirect('/api/books');
     }
     return response.json('File not found');
   },
@@ -113,13 +124,10 @@ router.post(
 router.get('/delete/:id', async (request, response) => {
   const { id } = request.params;
 
-  try {
-    await BookModelDB.findByIdAndDelete(id);
-
-    response.redirect('/api/books');
-  } catch (err) {
-    response.status(404).json(err);
+  if (await bookRepository.deleteBook(id)) {
+    return response.redirect('/api/books');
   }
+  return response.status(404);
 });
 
 // router.get('/:id/download', (request, response) => {

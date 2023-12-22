@@ -7,9 +7,9 @@ export default class DbConnection {
 
   private dbURL: string;
 
-  constructor(dbName: string) {
+  setParams(dbName: string, dbURL: string) {
     this.dbName = dbName;
-    this.dbURL = process.env.DB_URL;
+    this.dbURL = dbURL;
   }
 
   async connect() {

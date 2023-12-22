@@ -1,8 +1,6 @@
 import express from 'express';
 import axios from 'axios';
 import upload from '../middleware/upload';
-// import { BookModelDB } from '../models/booksSchema';
-// import fillDB from '../db/fill-db';
 import container from '../containers/container';
 import BookRepository from '../book/BookRepository';
 
@@ -14,8 +12,7 @@ const instance = axios.create({
 
 const bookRepository = container.get(BookRepository);
 
-// начальное заполнение БД для тестирования
-// fillDB();
+bookRepository.fillDb();
 
 router.get('/', async (request, response) => {
   const books = await bookRepository.getBooks();

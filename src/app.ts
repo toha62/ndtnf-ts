@@ -2,10 +2,11 @@ import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
-import mongoose, { Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { findByUsername, findById, verifyPassword } from './db/users';
 import CallbackUser from './types';
-// import User from './models/usersSchema';
+import container from './containers/container';
+import DbConnection from './infrastructure/mongo.connection';
 
 import pagesRouter from './routes/pages';
 import userRouter from './routes/user';
@@ -63,10 +64,12 @@ app.use('/api/user', userRouter);
 app.use('/api/books', booksRouter);
 
 async function start(PORT: string | 3000, DB_URL: string) {
+  const dbConnection = container.get(DbConnection);
+
   try {
-    await mongoose.connect(DB_URL, {
-      dbName: 'library',
-    });
+    dbConnection.setParams('library', DB_URL);
+    await dbConnection.connect();
+
     console.log('Mongoose connected');
 
     app.listen(PORT, () => {

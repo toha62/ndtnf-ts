@@ -4,7 +4,7 @@ import BookRepository from '../book/BookRepository';
 import IBook from '../interfaces/index';
 
 @injectable()
-export default class BookDbRepository implements BookRepository {
+export default class BookMongoRepository implements BookRepository {
   private BookModelDb;
 
   constructor() {
@@ -91,6 +91,28 @@ export default class BookDbRepository implements BookRepository {
     } catch (err) {
       console.error(err);
       return false;
+    }
+  }
+
+  // начальное заполнение БД для тестирования
+  async fillDb() {
+    await this.BookModelDb.deleteMany({});
+
+    try {
+      await this.BookModelDb.insertMany([
+        {
+          title: 'Война и мир',
+          authors: 'Л.Н.Толстой',
+          description: 'Русская классика',
+        },
+        {
+          title: 'Академия',
+          authors: 'А.Азимов',
+          description: 'Фантастика',
+        },
+      ]);
+    } catch (err) {
+      console.log('Error database initial insertion Books', err);
     }
   }
 }

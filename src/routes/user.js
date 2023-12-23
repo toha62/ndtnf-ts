@@ -1,8 +1,13 @@
 import express from 'express';
 import passport from 'passport';
-import { UserModelDB } from '../models/usersSchema';
+import container from '../containers/container';
+import UserRepository from '../abstractClasses/UserRepository';
 
 const router = express.Router();
+
+export const userRepository = container.get(UserRepository);
+
+userRepository.fillDb();
 
 router.get('/login', (request, response) => {
   response.render('../src/views/pages/login');
@@ -49,19 +54,17 @@ router.post(
     const {
       username, userpassword, dispname, email,
     } = request.body;
-    const newUser = new UserModelDB({
+
+    const newUser = await userRepository.createUser({
       username, password: userpassword, displayName: dispname, email,
     });
 
-    try {
-      await newUser.save();
-
-      response.status(201);
-      return response.redirect('login');
-    } catch (err) {
-      console.log('Error database initial insertion Users', err);
-      return response.status(500);
+    if (!newUser) {
+      response.status(500);
+      throw (new Error('Database Error. Can not create user'));
     }
+    response.status(201);
+    return response.redirect('login');
   },
 );
 

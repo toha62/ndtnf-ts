@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { Schema, model } from 'mongoose';
-import BookRepository from '../book/BookRepository';
+import BookRepository from '../abstractClasses/BookRepository';
 import IBook from '../interfaces/index';
 
 @injectable()

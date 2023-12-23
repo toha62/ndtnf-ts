@@ -2,7 +2,7 @@ import express from 'express';
 import axios from 'axios';
 import upload from '../middleware/upload';
 import container from '../containers/container';
-import BookRepository from '../book/BookRepository';
+import BookRepository from '../abstractClasses/BookRepository';
 
 const router = express.Router();
 const COUNTER_URL = process.env.COUNTER_URL || 'locallhost';

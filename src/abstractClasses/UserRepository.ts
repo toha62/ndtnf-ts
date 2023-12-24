@@ -8,4 +8,6 @@ export default abstract class UserRepository {
   abstract getUserById(id: Types.ObjectId): Promise<Express.User | null>;
 
   abstract getUserByName(username: string): Promise<Express.User | null>;
+
+  abstract fillDb(): void;
 }

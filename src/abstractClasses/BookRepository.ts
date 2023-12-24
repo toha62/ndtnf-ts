@@ -12,4 +12,6 @@ export default abstract class BookRepository {
   abstract updateBook(id: string, updatedData: IBook): Promise<IBook | null>;
 
   abstract deleteBook(id: string): Promise<true | false>;
+
+  abstract fillDb(): void;
 }

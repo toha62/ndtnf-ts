@@ -3,6 +3,7 @@ import axios from 'axios';
 import upload from '../middleware/upload';
 import container from '../containers/container';
 import BookRepository from '../abstractClasses/BookRepository';
+import IBook from '../interfaces';
 
 const router = express.Router();
 const COUNTER_URL = process.env.COUNTER_URL || 'locallhost';
@@ -62,15 +63,21 @@ router.post(
   '/',
   upload.fields([{ name: 'book-file', maxCount: 1 }, { name: 'cover-file', maxCount: 1 }]),
   async (request, response) => {
-    if (request.files['book-file'] && request.files['cover-file']) {
+    const { files } = request;
+
+    if (files instanceof Array) {
+      throw (new Error('Multer Error. Can not get files from request'));
+    }
+
+    if (files['book-file'] && files['cover-file']) {
       const {
         title, authors, description, favorite,
       } = request.body;
-      // const fileBook = request.files['book-file'][0].filename;
-      const fileCover = request.files['cover-file'][0].filename;
-      const fileName = request.files['book-file'][0].originalname;
+      // const fileBook = files['book-file'][0].filename;
+      const fileCover = files['cover-file'][0].filename;
+      const fileName = files['book-file'][0].originalname;
 
-      const newBookData = {
+      const newBookData: IBook = {
         title, authors, description, favorite, fileCover, fileName,
       };
 
@@ -91,17 +98,23 @@ router.post(
   '/:id',
   upload.fields([{ name: 'book-file', maxCount: 1 }, { name: 'cover-file', maxCount: 1 }]),
   async (request, response) => {
-    if (request.files['book-file'] && request.files['cover-file']) {
+    const { files } = request;
+
+    if (files instanceof Array) {
+      throw (new Error('Multer Error. Can not get files from request'));
+    }
+
+    if (files['book-file'] && files['cover-file']) {
       const { id } = request.params;
 
       const {
         title, authors, description, favorite,
       } = request.body;
-      // const fileBook = request.files['book-file'][0].filename;
-      const fileCover = request.files['cover-file'][0].filename;
-      const fileName = request.files['book-file'][0].originalname;
+      // const fileBook = files['book-file'][0].filename;
+      const fileCover = files['cover-file'][0].filename;
+      const fileName = files['book-file'][0].originalname;
 
-      const updateBook = {
+      const updateBook: IBook = {
         title, authors, description, favorite, fileCover, fileName,
       };
 

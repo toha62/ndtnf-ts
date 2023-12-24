@@ -4,7 +4,7 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface User {
-      _id: Types.ObjectId;
+      _id?: Types.ObjectId;
       username: string;
       password: string;
       displayName: string;
@@ -14,14 +14,14 @@ declare global {
 }
 
 export default interface IBook {
-  _id: Types.ObjectId;
+  _id?: Types.ObjectId;
   title: string;
   description: string;
   authors: string;
   favorite: boolean;
   fileCover: string;
   fileName: string;
-  fileBook: string;
+  fileBook?: string;
 }
 
 // export interface IUser {
